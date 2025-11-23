@@ -21,10 +21,7 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          '''DefaultFirebaseOptions have not been configured for android - 
-          you can reconfigure this by running the FlutterFire CLI again.''',
-        );
+        return android;
       case TargetPlatform.iOS:
         throw UnsupportedError(
           '''DefaultFirebaseOptions have not been configured for ios - 
@@ -33,10 +30,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          '''DefaultFirebaseOptions have not been configured for windows - 
-          you can reconfigure this by running the FlutterFire CLI again.''',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           '''DefaultFirebaseOptions have not been configured for linux - 
@@ -55,16 +49,34 @@ class DefaultFirebaseOptions {
     messagingSenderId: '223418724251',
     projectId: 'ttco-ce6db',
     authDomain: 'ttco-ce6db.firebaseapp.com',
-    storageBucket: 'ttco-ce6db.appspot.com',
+    storageBucket: 'ttco-ce6db.firebasestorage.app',
   );
 
-
   static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyDGZkKiV8ylO9WIUgH2_uxvIK_0q1WA3bM',
+    appId: '1:223418724251:ios:e6dd39f915e8ee0c537b3e',
+    messagingSenderId: '223418724251',
+    projectId: 'ttco-ce6db',
+    storageBucket: 'ttco-ce6db.firebasestorage.app',
+    iosClientId: '223418724251-5lhivgelngoetnk3qag55kg1r0oshren.apps.googleusercontent.com',
+    iosBundleId: 'com.example.myapp',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyBhHUUSBIht-krzQkEg1_6le023WrOF1Es',
+    appId: '1:223418724251:android:e1a7bc8366e9780b537b3e',
+    messagingSenderId: '223418724251',
+    projectId: 'ttco-ce6db',
+    storageBucket: 'ttco-ce6db.firebasestorage.app',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyBN3KCBGbWYd5gpygwQTAEIX8wj4x-bX4E',
     appId: '1:223418724251:web:65c78a677e32d02c537b3e',
     messagingSenderId: '223418724251',
     projectId: 'ttco-ce6db',
-    storageBucket: 'ttco-ce6db.appspot.com',
-    iosBundleId: 'com.example.myapp',
+    authDomain: 'ttco-ce6db.firebaseapp.com',
+    storageBucket: 'ttco-ce6db.firebasestorage.app',
   );
+
 }

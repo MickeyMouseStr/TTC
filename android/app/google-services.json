@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "223418724251",
+    "project_id": "ttco-ce6db",
+    "storage_bucket": "ttco-ce6db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223418724251:android:e1a7bc8366e9780b537b3e",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "223418724251-njq83qlgq801iclvdfoqk7rdmn810724.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhHUUSBIht-krzQkEg1_6le023WrOF1Es"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "223418724251-n9outdi9k8c0k6v500p28sbp59v2s7d1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "223418724251-5lhivgelngoetnk3qag55kg1r0oshren.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.myapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
