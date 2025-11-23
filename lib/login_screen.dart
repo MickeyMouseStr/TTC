@@ -13,7 +13,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -52,8 +52,8 @@ class _LoginScreenState extends State<LoginScreen> {
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
+        accessToken: googleAuth.accessToken,
       );
       await _auth.signInWithCredential(credential);
       if (mounted) context.go('/welcome');
