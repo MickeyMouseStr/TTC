@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in/google_sign_in.dart' as gsi;
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,7 +13,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+  final gsi.GoogleSignIn _googleSignIn = gsi.GoogleSignIn(scopes: ['email']);
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -44,12 +44,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _loginWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final gsi.GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         // The user canceled the sign-in
         return;
       }
-      final GoogleSignInAuthentication googleAuth =
+      final gsi.GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
@@ -141,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: _toggleForm,
                   child: Text(
                     _isLogin
-                        ? 'Don\'t have an account? Register'
+                        ? 'Don't have an account? Register'
                         : 'Have an account? Login',
                     style: TextStyle(color: Colors.grey[700]),
                   ),
