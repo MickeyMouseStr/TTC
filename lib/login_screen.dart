@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart' as gsi;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,7 +15,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final gsi.GoogleSignIn _googleSignIn = gsi.GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -65,13 +65,13 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final gsi.GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         // The user canceled the sign-in
         setState(() => _isLoading = false);
         return;
       }
-      final gsi.GoogleSignInAuthentication googleAuth =
+      final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
