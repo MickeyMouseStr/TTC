@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:go_router/go_router.dart';
 import 'firebase_options.dart';
 import 'login_screen.dart';
@@ -11,6 +12,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await FirebaseAppCheck.instance.activate();
   runApp(const MyApp());
 }
 
@@ -42,10 +44,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch().copyWith(
           primary: Colors.black,
           secondary: Colors.white,
-          background: Colors.grey[200],
           onPrimary: Colors.white,
           onSecondary: Colors.black,
-          onBackground: Colors.black,
           surface: Colors.white,
           onSurface: Colors.black,
         ),
