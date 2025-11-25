@@ -14,7 +14,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -56,6 +56,14 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    // Initialize GoogleSignIn singleton. We don't await here to avoid blocking UI,
+    // but we ensure it's called at least once before other methods.
+    _googleSignIn.initialize();
+  }
+
   Future<void> _loginWithGoogle() async {
     if (_isLoading) return;
     setState(() {
@@ -64,14 +72,16 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        // The user canceled the sign-in
-        setState(() => _isLoading = false);
-        return;
-      }
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+      // Attempt to request an access token for the scopes we require.
+      // authorizationForScopes may return null if a token cannot be issued
+      // without user interaction; that's OK — we can proceed with the idToken.
+      final authz = await googleUser.authorizationClient.authorizationForScopes(
+        ['email'],
+      );
+      final String? accessToken = authz?.accessToken;
+
       final AuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
         accessToken: accessToken,
