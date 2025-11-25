@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'services/nats_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -23,6 +26,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   final _oaStopLossController = TextEditingController();
 
   bool _isLong = true;
+  // NATS connection indicator
+  ValueNotifier<bool> _natsConnected = ValueNotifier(false);
 
   void _setMkt() {
     setState(() {
@@ -47,29 +52,71 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    NatsService.instance.connected.addListener(() {
+      _natsConnected.value = NatsService.instance.connected.value;
+    });
+    _setupNatsForUser();
+  }
+
+  Future<void> _setupNatsForUser() async {
+    final u = FirebaseAuth.instance.currentUser;
+    if (u == null) return;
+    try {
+      final query = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: u.email)
+          .limit(1)
+          .get();
+      if (query.docs.isEmpty) return;
+      final data = query.docs.first.data();
+      final dynamic cred = data['natsCredential'];
+      final subs = <String>[];
+      if (data['subscriptions'] is Iterable) {
+        subs.addAll(List<String>.from(data['subscriptions']));
+      }
+
+      // connect and subscribe
+      await NatsService.instance.connect(
+        url: 'tls://connect.ngs.global:4222',
+        credentials: cred is Map<String, dynamic> ? cred : null,
+        topics: subs,
+      );
+    } catch (e) {
+      if (kDebugMode) print('setupNatsForUser error: $e');
+    }
+  }
+
   Widget _buildTradeSetup(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          // Search Field
-          Row(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search instruments',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+              // Search Field
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Search instruments',
+                        prefixIcon: const Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  const SizedBox(width: 8),
+                ],
               ),
-              const SizedBox(width: 8),
-              const SizedBox(width: 8),
+              // Removed Positioned indicator from individual block; main indicator is in build (bottom-right for entire screen)
             ],
           ),
           const SizedBox(height: 12),
@@ -204,6 +251,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   @override
+  void dispose() {
+    // Cleanup controllers and nats
+    NatsService.instance.disconnect();
+    _natsConnected.dispose();
+    _searchController.dispose();
+    _quantityController.dispose();
+    _priceController.dispose();
+    _stopLossController.dispose();
+    _takeProfitController.dispose();
+    _oaTakeProfitController.dispose();
+    _oaStopLossController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
@@ -240,31 +302,50 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Upper - Trade Setup
-          Container(
-            color: Colors.white,
-            width: double.infinity,
-            child: _buildTradeSetup(context),
-          ),
-          const Divider(height: 1),
-          // Lower - Order Adjustment
-          Expanded(
-            child: Container(
-              color: Colors.grey[100],
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text(
-                      'Order Adjustment',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+          Column(
+            children: [
+              // Upper - Trade Setup
+              Container(
+                color: Colors.white,
+                width: double.infinity,
+                child: _buildTradeSetup(context),
+              ),
+              const Divider(height: 1),
+              // Lower - Order Adjustment
+              Expanded(
+                child: Container(
+                  color: Colors.grey[100],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          'Order Adjustment',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      _buildOrderAdjustment(context),
+                    ],
                   ),
-                  _buildOrderAdjustment(context),
-                ],
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: ValueListenableBuilder<bool>(
+              valueListenable: _natsConnected,
+              builder: (context, connected, child) => Tooltip(
+                message: connected ? 'Connected' : 'Disconnected',
+                child: Icon(
+                  Icons.lightbulb,
+                  color: connected ? Colors.greenAccent : Colors.grey,
+                  size: 28,
+                ),
               ),
             ),
           ),
