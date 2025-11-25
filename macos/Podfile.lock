@@ -11,11 +11,19 @@ PODS:
     - PromisesObjC (~> 2.4)
   - facebook_auth_desktop (0.0.3):
     - FlutterMacOS
+  - Firebase/AppCheck (12.4.0):
+    - Firebase/CoreOnly
+    - FirebaseAppCheck (~> 12.4.0)
   - Firebase/Auth (12.4.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 12.4.0)
   - Firebase/CoreOnly (12.4.0):
     - FirebaseCore (~> 12.4.0)
+  - firebase_app_check (0.4.1-2):
+    - Firebase/AppCheck (~> 12.4.0)
+    - Firebase/CoreOnly (~> 12.4.0)
+    - firebase_core
+    - FlutterMacOS
   - firebase_auth (6.1.2):
     - Firebase/Auth (~> 12.4.0)
     - Firebase/CoreOnly (~> 12.4.0)
@@ -24,6 +32,12 @@ PODS:
   - firebase_core (4.2.1):
     - Firebase/CoreOnly (~> 12.4.0)
     - FlutterMacOS
+  - FirebaseAppCheck (12.4.0):
+    - AppCheckCore (~> 11.0)
+    - FirebaseAppCheckInterop (~> 12.4.0)
+    - FirebaseCore (~> 12.4.0)
+    - GoogleUtilities/Environment (~> 8.1)
+    - GoogleUtilities/UserDefaults (~> 8.1)
   - FirebaseAppCheckInterop (12.4.0)
   - FirebaseAuth (12.4.0):
     - FirebaseAppCheckInterop (~> 12.4.0)
@@ -94,6 +108,7 @@ PODS:
 
 DEPENDENCIES:
   - facebook_auth_desktop (from `Flutter/ephemeral/.symlinks/plugins/facebook_auth_desktop/macos`)
+  - firebase_app_check (from `Flutter/ephemeral/.symlinks/plugins/firebase_app_check/macos`)
   - firebase_auth (from `Flutter/ephemeral/.symlinks/plugins/firebase_auth/macos`)
   - firebase_core (from `Flutter/ephemeral/.symlinks/plugins/firebase_core/macos`)
   - flutter_secure_storage_macos (from `Flutter/ephemeral/.symlinks/plugins/flutter_secure_storage_macos/macos`)
@@ -106,6 +121,7 @@ SPEC REPOS:
     - AppAuth
     - AppCheckCore
     - Firebase
+    - FirebaseAppCheck
     - FirebaseAppCheckInterop
     - FirebaseAuth
     - FirebaseAuthInterop
@@ -121,6 +137,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   facebook_auth_desktop:
     :path: Flutter/ephemeral/.symlinks/plugins/facebook_auth_desktop/macos
+  firebase_app_check:
+    :path: Flutter/ephemeral/.symlinks/plugins/firebase_app_check/macos
   firebase_auth:
     :path: Flutter/ephemeral/.symlinks/plugins/firebase_auth/macos
   firebase_core:
@@ -139,8 +157,10 @@ SPEC CHECKSUMS:
   AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
   facebook_auth_desktop: 0ec755e3b01669ec14776af18b6945671a788916
   Firebase: f07b15ae5a6ec0f93713e30b923d9970d144af3e
+  firebase_app_check: 87116ccdfe0f153231af37b0431e96b0d5a76b9c
   firebase_auth: f7f3fc5330acb24faf314a400d5814c91d90aaa9
   firebase_core: bab38c0ca089203d6012b1ab19d744c30923b96e
+  FirebaseAppCheck: 73721d98fa29cf199da6004e57715cbaddd49651
   FirebaseAppCheckInterop: f734c802f21fe1da0837708f0f9a27218c8a4ed0
   FirebaseAuth: 4a2aed737c84114a9d9b33d11ae1b147d6b94889
   FirebaseAuthInterop: 858e6b754966e70740a4370dd1503dfffe6dbb49

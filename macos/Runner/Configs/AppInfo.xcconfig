@@ -9,6 +9,9 @@ PRODUCT_NAME = myapp
 
 // The application's bundle identifier
 PRODUCT_BUNDLE_IDENTIFIER = com.example.myapp
+// Apple Team used for automatic signing / keychain access
+DEVELOPMENT_TEAM = G3NQ5QQ329
+CODE_SIGN_STYLE = Automatic
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.

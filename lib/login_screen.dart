@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -75,8 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
           await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
-        accessToken: googleAuth.accessToken,
+        accessToken: accessToken,
       );
+
       await _auth.signInWithCredential(credential);
       if (mounted) context.go('/welcome');
     } catch (e) {
@@ -159,7 +159,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             _errorMessage!,
                             style: const TextStyle(
-                                color: Colors.red, fontWeight: FontWeight.w600),
+                              color: Colors.red,
+                              fontWeight: FontWeight.w600,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -198,9 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: Colors.grey[600]),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Colors.black, width: 2),
@@ -216,9 +216,7 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         minimumSize: const Size(double.infinity, 50),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 5,
       ),
       child: Text(
@@ -254,9 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
       onPressed: _toggleForm,
       child: RichText(
         text: TextSpan(
-          text: _isLogin
-              ? "Don't have an account? "
-              : "Have an account? ",
+          text: _isLogin ? "Don't have an account? " : "Have an account? ",
           style: GoogleFonts.lato(color: Colors.grey[700]),
           children: [
             TextSpan(
