@@ -53,6 +53,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       if (data['subscriptions'] is Iterable) {
         subs.addAll(List<String>.from(data['subscriptions']));
       }
+      if (kDebugMode) {
+        print('[NATS] Firestore fetched user: ${u.email}');
+        print('[NATS] creds: ${cred ?? 'null'}');
+        print('[NATS] subs: ${subs.join(', ')}');
+      }
 
       await NatsService.instance.connect(
         url: 'tls://connect.ngs.global:4222',
