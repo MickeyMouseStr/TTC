@@ -27,12 +27,44 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   bool _isLong = true;
   // NATS connection indicator
-  ValueNotifier<bool> _natsConnected = ValueNotifier(false);
+  final ValueNotifier<bool> _natsConnected = ValueNotifier(false);
+  Map<String, dynamic>? _natsCredential;
+  List<String> _natsSubscriptions = [];
 
   void _setMkt() {
     setState(() {
       _priceController.text = 'MKT';
     });
+  }
+
+  Future<void> _manualNatsConnect() async {
+    final u = FirebaseAuth.instance.currentUser;
+    if (u == null) return;
+    try {
+      final query = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: u.email)
+          .limit(1)
+          .get();
+      if (query.docs.isEmpty) return;
+      final data = query.docs.first.data();
+      final dynamic cred = data['natsCredential'];
+      final subs = <String>[];
+      if (data['subscriptions'] is Iterable) {
+        subs.addAll(List<String>.from(data['subscriptions']));
+      }
+
+      await NatsService.instance.connect(
+        url: 'tls://connect.ngs.global:4222',
+        credentials: cred is Map<String, dynamic> ? cred : null,
+        topics: subs,
+      );
+      if (kDebugMode) print('[NATS] manual connect success');
+      setState(() {});
+    } catch (e) {
+      if (kDebugMode) print('[NATS] manual connect failed: $e');
+      setState(() {});
+    }
   }
 
   void _toggleProfileMenu(String choice) async {
@@ -55,10 +87,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-    NatsService.instance.connected.addListener(() {
-      _natsConnected.value = NatsService.instance.connected.value;
-    });
+    NatsService.instance.connected.addListener(_onNatsConnectedChanged);
     _setupNatsForUser();
+  }
+
+  void _onNatsConnectedChanged() {
+    _natsConnected.value = NatsService.instance.connected.value;
   }
 
   Future<void> _setupNatsForUser() async {
@@ -77,6 +111,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       if (data['subscriptions'] is Iterable) {
         subs.addAll(List<String>.from(data['subscriptions']));
       }
+
+      // store for debug
+      _natsCredential = cred is Map<String, dynamic> ? Map.from(cred) : null;
+      _natsSubscriptions = subs;
+      setState(() {});
 
       // connect and subscribe
       await NatsService.instance.connect(
@@ -119,6 +158,26 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               // Removed Positioned indicator from individual block; main indicator is in build (bottom-right for entire screen)
             ],
           ),
+          if ((kDebugMode) &&
+              (_natsCredential != null || _natsSubscriptions.isNotEmpty))
+            Padding(
+              padding: const EdgeInsets.only(top: 12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (_natsCredential != null)
+                    Text(
+                      'NATS Creds: ${_natsCredential!['user'] ?? _natsCredential!['token'] ?? 'creds'}',
+                    ),
+                  Text('Subscriptions: ${_natsSubscriptions.join(', ')}'),
+                  if (NatsService.instance.lastError != null)
+                    Text(
+                      'NATS lastError: ${NatsService.instance.lastError!}',
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                ],
+              ),
+            ),
           const SizedBox(height: 12),
           // Buttons and inputs
           Wrap(
@@ -254,6 +313,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   void dispose() {
     // Cleanup controllers and nats
     NatsService.instance.disconnect();
+    NatsService.instance.connected.removeListener(_onNatsConnectedChanged);
     _natsConnected.dispose();
     _searchController.dispose();
     _quantityController.dispose();
@@ -299,6 +359,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
             ),
+          ),
+          IconButton(
+            tooltip: 'Re-connect NATS (debug)',
+            onPressed: _manualNatsConnect,
+            icon: const Icon(Icons.wifi),
           ),
         ],
       ),
