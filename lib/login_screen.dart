@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
               constraints: const BoxConstraints(maxWidth: 400),
               child: Card(
                 elevation: 8,
-                shadowColor: Colors.black.withOpacity(0.2),
+                shadowColor: const Color.fromRGBO(0, 0, 0, 0.2),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),

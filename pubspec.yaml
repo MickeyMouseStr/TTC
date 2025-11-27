@@ -1,5 +1,5 @@
-name: myapp
-description: "A new Flutter project."
+name: ttc
+description: "The Trading Console"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -18,7 +18,7 @@ dependencies:
   font_awesome_flutter: ^10.12.0
   google_fonts: ^6.3.2
   cloud_firestore: ^6.1.0
-  nats_client: ^2.1.0
+  dart_nats: ^0.6.5
 
 dev_dependencies:
   flutter_test:
